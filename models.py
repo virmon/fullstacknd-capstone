@@ -3,6 +3,7 @@ import os
 from sqlalchemy import Column, String, Integer, create_engine
 from flask_sqlalchemy import SQLAlchemy
 import json
+import datetime
 
 database_name = "casting"
 database_path = "postgres://{}/{}".format('localhost:5432', database_name)
@@ -41,14 +42,14 @@ class Actor(db.Model):
 
     id = Column(Integer, primary_key=True)
     name = Column(String)
-    genres = Column(String)
-    role = Column(String)
+    age = Column(Integer)
+    gender = Column(String)
     movie = db.relationship('Cast', back_populates='actor')
 
-    def __init__(self, name, genres, role):
+    def __init__(self, name, age, gender):
         self.name = name
-        self.genres = genres
-        self.role = role
+        self.age = age
+        self.gender = gender
     
     def insert(self):
         db.session.add(self)
@@ -65,8 +66,8 @@ class Actor(db.Model):
         return {
             'id': self.id,
             'name': self.name,
-            'genres': self.genres,
-            'role': self.role
+            'age': self.age,
+            'gender': self.gender
         }
 
     def __repr__(self):
@@ -81,12 +82,12 @@ class Movie(db.Model):
 
     id = Column(Integer, primary_key=True)
     title = Column(String)
-    genres = Column(String)
+    release_date = Column(db.Date)
     actor = db.relationship('Cast', back_populates='movie')
 
-    def __init__(self, title, genres):
+    def __init__(self, title, release_date):
         self.title = title,
-        self.genres = genres
+        self.release_date = release_date
     
     def insert(self):
         db.session.add(self)
@@ -103,7 +104,7 @@ class Movie(db.Model):
         return {
             'id': self.id,
             'title': self.title,
-            'genres': self.genres
+            'release_date': self.release_date
         }
     
     def __repr__(self):
