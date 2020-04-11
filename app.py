@@ -11,12 +11,12 @@ def create_app(test_config=None):
   setup_db(app)
   CORS(app)
 
-  @app.route('/')
-  def index():
-    return jsonify({
-      'login': "https://fullstacknd-capstone.auth0.com/authorize?audience=movie&response_type=token&client_id=LNlBEBoUOOHQgDeh51TVaYlogoZT8FAG&redirect_uri=http://localhost:5000",
-      'logout': "https://fullstacknd-capstone.auth0.com/v2/logout"
-    })
+  # @app.route('/')
+  # def index():
+  #   return jsonify({
+  #     'login': "https://fullstacknd-capstone.auth0.com/authorize?audience=movie&response_type=token&client_id=LNlBEBoUOOHQgDeh51TVaYlogoZT8FAG&redirect_uri=http://localhost:5000",
+  #     'logout': "https://fullstacknd-capstone.auth0.com/v2/logout"
+  #   })
 
   '''
   Actor Endpoint
@@ -25,7 +25,8 @@ def create_app(test_config=None):
 
   '''
   @app.route('/actors', methods=['GET'])
-  def get_actors():
+  @requires_auth('get:actors')
+  def get_actors(jwt):
     result = Actor.query.all()
 
     data = [actor.format() for actor in result]
@@ -44,7 +45,8 @@ def create_app(test_config=None):
     
   '''
   @app.route('/actors/<int:id>', methods=['GET'])
-  def get_actor_by_id(id):
+  @requires_auth('get:actors')
+  def get_actor_by_id(jwt, id):
     result = Actor.query.get(id)
     
     if not result:
@@ -130,7 +132,8 @@ def create_app(test_config=None):
 
   '''
   @app.route('/movies', methods=['GET'])
-  def get_movies():
+  @requires_auth('get:movies')
+  def get_movies(jwt):
     result = Movie.query.all()
 
     data = [movie.format() for movie in result]
@@ -149,7 +152,8 @@ def create_app(test_config=None):
     
   '''
   @app.route('/movies/<int:id>', methods=['GET'])
-  def get_movie_by_id(id):
+  @requires_auth('get:movies')
+  def get_movie_by_id(jwt, id):
     result = Movie.query.get(id)
     
     if not result:
