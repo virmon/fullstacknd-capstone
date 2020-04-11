@@ -68,18 +68,6 @@ CREATE TABLE public.alembic_version (
 ALTER TABLE public.alembic_version OWNER TO virmon;
 
 --
--- Name: casts; Type: TABLE; Schema: public; Owner: virmon
---
-
-CREATE TABLE public.casts (
-    actor_id integer NOT NULL,
-    movie_id integer NOT NULL
-);
-
-
-ALTER TABLE public.casts OWNER TO virmon;
-
---
 -- Name: movies; Type: TABLE; Schema: public; Owner: virmon
 --
 
@@ -133,8 +121,9 @@ ALTER TABLE ONLY public.movies ALTER COLUMN id SET DEFAULT nextval('public.movie
 --
 
 COPY public.actors (id, name, age, gender) FROM stdin;
-4	Dana	25	female
-5	Dana	25	female
+1	James	30	male
+2	Dana	25	female
+3	Joshua	18	male
 \.
 
 
@@ -148,18 +137,12 @@ COPY public.alembic_version (version_num) FROM stdin;
 
 
 --
--- Data for Name: casts; Type: TABLE DATA; Schema: public; Owner: virmon
---
-
-COPY public.casts (actor_id, movie_id) FROM stdin;
-\.
-
-
---
 -- Data for Name: movies; Type: TABLE DATA; Schema: public; Owner: virmon
 --
 
 COPY public.movies (id, title, release_date) FROM stdin;
+1	Space Hound	2013-06-01
+2	Amazing Show	2020-06-01
 \.
 
 
@@ -167,14 +150,14 @@ COPY public.movies (id, title, release_date) FROM stdin;
 -- Name: actors_id_seq; Type: SEQUENCE SET; Schema: public; Owner: virmon
 --
 
-SELECT pg_catalog.setval('public.actors_id_seq', 5, true);
+SELECT pg_catalog.setval('public.actors_id_seq', 3, true);
 
 
 --
 -- Name: movies_id_seq; Type: SEQUENCE SET; Schema: public; Owner: virmon
 --
 
-SELECT pg_catalog.setval('public.movies_id_seq', 1, true);
+SELECT pg_catalog.setval('public.movies_id_seq', 2, true);
 
 
 --
@@ -194,35 +177,11 @@ ALTER TABLE ONLY public.alembic_version
 
 
 --
--- Name: casts casts_pkey; Type: CONSTRAINT; Schema: public; Owner: virmon
---
-
-ALTER TABLE ONLY public.casts
-    ADD CONSTRAINT casts_pkey PRIMARY KEY (actor_id, movie_id);
-
-
---
 -- Name: movies movies_pkey; Type: CONSTRAINT; Schema: public; Owner: virmon
 --
 
 ALTER TABLE ONLY public.movies
     ADD CONSTRAINT movies_pkey PRIMARY KEY (id);
-
-
---
--- Name: casts casts_actor_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: virmon
---
-
-ALTER TABLE ONLY public.casts
-    ADD CONSTRAINT casts_actor_id_fkey FOREIGN KEY (actor_id) REFERENCES public.actors(id);
-
-
---
--- Name: casts casts_movie_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: virmon
---
-
-ALTER TABLE ONLY public.casts
-    ADD CONSTRAINT casts_movie_id_fkey FOREIGN KEY (movie_id) REFERENCES public.movies(id);
 
 
 --
