@@ -11,12 +11,13 @@ def create_app(test_config=None):
   setup_db(app)
   CORS(app)
 
-  # @app.route('/')
-  # def index():
-  #   return jsonify({
-  #     'login': "https://fullstacknd-capstone.auth0.com/authorize?audience=movie&response_type=token&client_id=LNlBEBoUOOHQgDeh51TVaYlogoZT8FAG&redirect_uri=http://localhost:5000",
-  #     'logout': "https://fullstacknd-capstone.auth0.com/v2/logout"
-  #   })
+  @app.route('/')
+  def index():
+    return "Casting Agency API"
+    # return jsonify({
+    #   'login': "https://fullstacknd-capstone.auth0.com/authorize?audience=movie&response_type=token&client_id=LNlBEBoUOOHQgDeh51TVaYlogoZT8FAG&redirect_uri=http://localhost:5000",
+    #   'logout': "https://fullstacknd-capstone.auth0.com/v2/logout"
+    # })
 
   '''
   Actor Endpoint
