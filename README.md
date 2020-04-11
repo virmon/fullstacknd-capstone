@@ -20,6 +20,24 @@ export FLASK_APP=app.py
 flask run --reload
 ```
 
+### Run Test
+
+## run test_app.py
+```bash
+dropdb casting
+createdb casting
+psql casting < movie.psql
+python test_app.py
+```
+
+## run fullstacknd-capstone.postman_collection.json or open in Postman (make sure the server is running)
+```bash
+dropdb casting
+createdb casting
+psql casting < movie.psql
+newman run fullstacknd-capstone.postman_collection.json
+```
+
 ### Roles
  - Casting Assistant: view only
  - Casting Director: view, create and modify actors; modify movie
@@ -161,13 +179,4 @@ flask run --reload
 {
     "success": true
 }
-```
-
-## Run Test
-
-```bash
-dropdb casting
-createdb casting
-psql casting < movie.psql
-python test_app.py
 ```
