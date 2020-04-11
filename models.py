@@ -5,8 +5,10 @@ from flask_sqlalchemy import SQLAlchemy
 import json
 import datetime
 
-database_name = "casting"
-database_path = "postgres://{}/{}".format('localhost:5432', database_name)
+# database_name = "casting"
+# database_path = "postgres://{}/{}".format('localhost:5432', database_name)
+
+database_path = "postgres://jswwfgmawbmtxe:0d1124b0ee55454f3edadbce0a99eb31c0f2382790ec666cf4033d0a272ece6d@ec2-52-6-143-153.compute-1.amazonaws.com:5432/ddji3mc8q0o1au"
 
 db = SQLAlchemy()
 
