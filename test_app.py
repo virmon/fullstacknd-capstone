@@ -14,6 +14,7 @@ class AppTestCase(unittest.TestCase):
         self.client = self.app.test_client
         self.database_name = "test_app"
         self.database_path = "postgres://{}/{}".format('localhost:5432', self.database_name)
+        self.casting_assistant_token = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IlczZUlycFpSaVJsTG1jRGg4NVB6TCJ9.eyJpc3MiOiJodHRwczovL2Z1bGxzdGFja25kLWNhcHN0b25lLmF1dGgwLmNvbS8iLCJzdWIiOiJhdXRoMHw1ZTkxY2QzZjU0YzMyMjBjNjk3NDU2NWEiLCJhdWQiOiJtb3ZpZSIsImlhdCI6MTU4NjYyNDE2MSwiZXhwIjoxNTg2NzEwNTYxLCJhenAiOiJMTmxCRUJvVU9PSFFnRGVoNTFUVmFZbG9nb1pUOEZBRyIsInNjb3BlIjoiIiwicGVybWlzc2lvbnMiOlsiZ2V0OmFjdG9ycyIsImdldDptb3ZpZXMiXX0.hF9Oh0Vg0w-AdkU7srBiGBeIK_v0khCu4DcjrGruoCrD6Af9MNFUuLB2-zL7x_2j8sNn0KBX14vgfd6dISwY38iFnkzww69D2g0zs319a0idv73hIdyS_7qYOt6G-GNaS2mkh-99nycCUuzUa_PVdqMxT6CLtNR1HdZNixDMWLIakFzZtllh6mjgtw8f4eaCC9sVL5VL0P4iIEQyfYwRa9OvD6gVPdlucm5x2Q452e0-iE1TJFpzVHM2QJmc_4klFsHaF4tYZFfNDhfgE0LPN12CUxjmmnwrkKHSorViMCCQzZJm4oph3UYfSGZ6AuO65uSeIci6BOKYH2REPAbJtw"
         self.casting_director_token = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IlczZUlycFpSaVJsTG1jRGg4NVB6TCJ9.eyJpc3MiOiJodHRwczovL2Z1bGxzdGFja25kLWNhcHN0b25lLmF1dGgwLmNvbS8iLCJzdWIiOiJhdXRoMHw1ZTkxY2QzZjU0YzMyMjBjNjk3NDU2NWEiLCJhdWQiOiJtb3ZpZSIsImlhdCI6MTU4NjYzMjY0MywiZXhwIjoxNTg2NzE5MDQzLCJhenAiOiJMTmxCRUJvVU9PSFFnRGVoNTFUVmFZbG9nb1pUOEZBRyIsInNjb3BlIjoiIiwicGVybWlzc2lvbnMiOlsiZ2V0OmFjdG9ycyIsImdldDptb3ZpZXMiXX0.T29I8gHYkhP-824K-vy-zNYFTmOxzRzjZCuGbfwIBD6aHR_ZfEXdlw2DepIGyp0ffAusskig4w1grezuFfseZcOoZYN2BtRKGoVs5tzdFGx-6id5be4HFZB9rH0C3T8xdSlUSzEBb3mJ_nzcvACEHsBewHxeMI9AsPdEJiFEMLN4LuZOdISVhgBSPTEr7a8YziAz20yCNkGAidya0zeQ2YuiB9LpRjCyI9Z9EZsH7yzhwFuEMU1ND-tsMowP8gX2Rr_Daq97__0373_wnGyzcUz_JD9Zu0bD6wosUXbpIQrmrsVBe5clHhSa1TklbsqYE4IQfidqEIigLTFzn7GOWA"
         self.executive_producer_token = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IlczZUlycFpSaVJsTG1jRGg4NVB6TCJ9.eyJpc3MiOiJodHRwczovL2Z1bGxzdGFja25kLWNhcHN0b25lLmF1dGgwLmNvbS8iLCJzdWIiOiJhdXRoMHw1ZTkxNWExYjdhNjE1MjBjNjFlNzNkMTIiLCJhdWQiOiJtb3ZpZSIsImlhdCI6MTU4NjYyNDMzMSwiZXhwIjoxNTg2NzEwNzMxLCJhenAiOiJMTmxCRUJvVU9PSFFnRGVoNTFUVmFZbG9nb1pUOEZBRyIsInNjb3BlIjoiIiwicGVybWlzc2lvbnMiOlsiZGVsZXRlOmFjdG9yIiwiZGVsZXRlOm1vdmllIiwiZ2V0OmFjdG9ycyIsImdldDptb3ZpZXMiLCJwYXRjaDphY3RvciIsInBhdGNoOm1vdmllIiwicG9zdDphY3RvciIsInBvc3Q6bW92aWUiXX0.edJcKcljpsdAhzgxHa7awpqSvQXCK4Z5fh5-vLllSJUaPcyLeqSDbkIZd8nYB6eObmdVius_UYD55Aw4TkdWeyYVdI-p1QM7JAgfm3F2P0PO9LRwoOEg_iR5oe95wx3Ww2YdLOxNpPIk029Kse-Aw-q-QVofVYmD7Wwyg1ZiOxOn4atmpmKRhqiVQsBJ3CZKO3LkpY8BKe00dtxqk5P_d2hBetAjhcefqa4dwLb47cYbuv51LSs35o1dFhKL_1Mz_exqKU2LZXlcyVopwG7x016TBwy52ejaBQxIDf7KNK2_9qDQ97oGiliBdcfGh4nn6U1F_bmPEpAE3Gotk-LVYg"
         setup_db(self.app)
@@ -92,6 +93,20 @@ class AppTestCase(unittest.TestCase):
 
         self.assertEqual(res.status_code, 201)
         self.assertEqual(data['success'], True)
+        
+    #  401 post new actor
+    def test_post_actor_401(self):
+        res = self.client().post('/movies', 
+            json={
+                'name': 'Andy',
+                'age': 25, 
+                'gender':'male'}, 
+            headers={
+                "Authorization":
+                    "Bearer {}".format(self.casting_assistant_token)
+            })
+
+        self.assertEqual(res.status_code, 401)
 
     # #  update actor
     def test_update_actor(self):
@@ -109,6 +124,19 @@ class AppTestCase(unittest.TestCase):
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['success'], True)
 
+    def test_update_actor_401(self):
+        res = self.client().delete(
+            '/actors/4', 
+            json={
+                'name': 'Andy',
+                'age': 30, 
+                'gender':'male'}, 
+            headers={
+                "Authorization":
+                    "Bearer {}".format(self.casting_assistant_token)
+            })
+        self.assertEqual(res.status_code, 401)
+
     #  delete actor
     def test_delete_actor(self):
         res = self.client().delete('/actors/3', 
@@ -120,6 +148,15 @@ class AppTestCase(unittest.TestCase):
 
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['success'], True)
+
+    def test_delete_actor_401(self):
+        res = self.client().delete(
+            '/actors/2',
+            headers={
+                "Authorization":
+                    "Bearer {}".format(self.casting_assistant_token)
+            })
+        self.assertEqual(res.status_code, 401)
 
     '''
     Test Movie
@@ -167,6 +204,18 @@ class AppTestCase(unittest.TestCase):
 
         self.assertEqual(res.status_code, 201)
         self.assertEqual(data['success'], True)
+    
+    #  401 post new movie
+    def test_post_movie_401(self):
+        res = self.client().post('/movies', 
+            json={
+                'title': 'Computer Geeks',
+                'release_date': '01-01-2022'}, 
+            headers={
+                "Authorization":
+                    "Bearer {}".format(self.casting_director_token)
+            })
+        self.assertEqual(res.status_code, 401)
 
     #  update movie
     def test_update_movie(self):
@@ -183,6 +232,18 @@ class AppTestCase(unittest.TestCase):
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['success'], True)
 
+    def test_update_movie_401(self):
+        res = self.client().patch(
+            '/movies/1', 
+            json={
+                'title': 'Space Ranger',
+                'release_date':'01-01-2021'}, 
+            headers={
+                "Authorization":
+                    "Bearer {}".format(self.casting_assistant_token)
+            })
+        self.assertEqual(res.status_code, 401)
+
     #  delete movie
     def test_delete_movie(self):
         res = self.client().delete('/movies/2', 
@@ -194,6 +255,15 @@ class AppTestCase(unittest.TestCase):
 
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['success'], True)
+
+    def test_delete_movie_401(self):
+        res = self.client().delete(
+            '/movies/1',
+            headers={
+                "Authorization":
+                    "Bearer {}".format(self.casting_director_token)
+            })
+        self.assertEqual(res.status_code, 401)
 
 
 if __name__ == "__main__":
