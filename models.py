@@ -18,22 +18,6 @@ def setup_db(app):
 
 
 '''
-Cast
-
-'''
-class Cast(db.Model):
-    __tablename__ = 'casts'
-
-    actor_id = Column(Integer, db.ForeignKey('actors.id'), primary_key=True)
-    movie_id = Column(Integer, db.ForeignKey('movies.id'), primary_key=True)
-    movie = db.relationship("Movie", back_populates="actor")
-    actor = db.relationship("Actor", back_populates="movie")
-
-    def __repr__(self):
-        return f'<Cast {self.actor.name} {self.movie.title}>'
-
-
-'''
 Actor
 
 '''
@@ -44,7 +28,6 @@ class Actor(db.Model):
     name = Column(String)
     age = Column(Integer)
     gender = Column(String)
-    movie = db.relationship('Cast', back_populates='actor')
 
     def __init__(self, name, age, gender):
         self.name = name
@@ -83,7 +66,6 @@ class Movie(db.Model):
     id = Column(Integer, primary_key=True)
     title = Column(String)
     release_date = Column(db.Date)
-    actor = db.relationship('Cast', back_populates='movie')
 
     def __init__(self, title, release_date):
         self.title = title,

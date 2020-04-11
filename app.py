@@ -1,9 +1,10 @@
 import os
 from flask import Flask, request, jsonify, abort
 from sqlalchemy import exc
-from models import Cast, Actor, Movie, setup_db
+from models import Actor, Movie, setup_db
 from flask_cors import CORS
 import json
+from auth import AuthError, requires_auth
 
 def create_app(test_config=None):
   app = Flask(__name__)
@@ -12,26 +13,30 @@ def create_app(test_config=None):
 
   @app.route('/')
   def index():
-    return "Casting Agency API"
+    return jsonify({
+      'login': "https://fullstacknd-capstone.auth0.com/authorize?audience=movie&response_type=token&client_id=LNlBEBoUOOHQgDeh51TVaYlogoZT8FAG&redirect_uri=http://localhost:5000",
+      'logout': "https://fullstacknd-capstone.auth0.com/v2/logout"
+    })
 
   '''
+  Actor Endpoint
   GET
     - retrieve all actors
 
   '''
   @app.route('/actors', methods=['GET'])
   def get_actors():
-    data = Actor.query.all()
+    result = Actor.query.all()
+
+    data = [actor.format() for actor in result]
     
-    if len(data) == 0:
+    if not data:
       not_found(404)
-    else:
-      actors = [actor.format() for actor in data]
       
-      return jsonify({
-        'success': True,
-        'actors': actors
-      }), 200
+    return jsonify({
+      'success': True,
+      'actors': data
+    }), 200
 
   '''
   GET
@@ -40,14 +45,14 @@ def create_app(test_config=None):
   '''
   @app.route('/actors/<int:id>', methods=['GET'])
   def get_actor_by_id(id):
-    data = Actor.query.filter(Actor.id == id).first()
+    result = Actor.query.get(id)
     
-    if not data:
+    if not result:
       not_found(404)
     else:
       return jsonify({
         'success': True,
-        'actor': data.format()
+        'actor': result.format()
       }), 200
 
   '''
@@ -56,24 +61,23 @@ def create_app(test_config=None):
     
   '''
   @app.route('/actors', methods=['POST'])
-  def add_actor():
+  @requires_auth('post:actor')
+  def add_actor(jwt):
     data = request.get_json()
-    
-    name = data.get('name')
-    age = data.get('age')
-    gender = data.get('gender')
 
-    if 'name' in data and 'age' in data and 'gender' in data:
-      if name != '' and age != '' and gender != '':
-        actor = Actor(name=name, age=age, gender=gender)
-        actor.insert()
+    name = data.get('name', '')
+    age = data.get('age', '')
+    gender = data.get('gender', '')
 
+    new_actor = Actor(name=name, age=age, gender=gender)
+    try:
+        new_actor.insert()
         return jsonify({
-          'success': True,
-          'actor': actor.format()
+            'success': True,
+            'actor': new_actor.format()
         }), 201
-    else:
-      bad_request(400)
+    except():
+        abort(500)
 
   '''
   PATCH
@@ -81,13 +85,14 @@ def create_app(test_config=None):
     
   '''
   @app.route('/actors/<int:id>', methods=['PATCH'])
-  def update_actor(id):
+  @requires_auth('patch:actor')
+  def update_actor(jwt, id):
     data = request.get_json()
 
     actor = Actor.query.filter(Actor.id == id).first()
 
     if not actor:
-      abort(404)
+      not_found(404)
     else:
       actor.name = data.get('name')
       actor.age = data.get('age')
@@ -105,37 +110,38 @@ def create_app(test_config=None):
     
   '''
   @app.route('/actors/<int:id>', methods=['DELETE'])
-  def delete_actor(id):
-    actor = Actor.query.filter(Actor.id == id).first()
+  @requires_auth('delete:actor')
+  def delete_actor(jwt, id):
+    actor = Actor.query.get(id)
 
-    if not actor:
+    if actor is None:
       not_found(404)
     else:
       actor.delete()
 
-    return jsonify({
-      'success': True,
-      'deleted': id
-    }), 200
+      return jsonify({
+        'success': True
+      }), 200
 
   '''
+  Movie Endpoint
   GET
-    - retrieve all movies
+    - retrieve all actors
 
   '''
   @app.route('/movies', methods=['GET'])
   def get_movies():
-    data = Movie.query.all()
+    result = Movie.query.all()
+
+    data = [movie.format() for movie in result]
     
-    if len(data) == 0:
+    if not data:
       not_found(404)
-    else:
-      movies = [movie.format() for movie in data]
       
-      return jsonify({
-        'success': True,
-        'movies': movies
-      }), 200
+    return jsonify({
+      'success': True,
+      'movies': data
+    }), 200
 
   '''
   GET
@@ -144,14 +150,14 @@ def create_app(test_config=None):
   '''
   @app.route('/movies/<int:id>', methods=['GET'])
   def get_movie_by_id(id):
-    data = Movie.query.filter(Movie.id == id).first()
+    result = Movie.query.get(id)
     
-    if not data:
+    if not result:
       not_found(404)
     else:
       return jsonify({
         'success': True,
-        'movie': data.format()
+        'movie': result.format()
       }), 200
 
   '''
@@ -160,23 +166,22 @@ def create_app(test_config=None):
     
   '''
   @app.route('/movies', methods=['POST'])
-  def add_movie():
+  @requires_auth('post:movie')
+  def add_movie(jwt):
     data = request.get_json()
-    
-    title = data.get('title')
-    release_date = data.get('release_date')
 
-    if 'title' in data and 'release_date' in data:
-      if title != '' and release_date != '':
-        movie = Movie(title=title, release_date=release_date)
-        movie.insert()
+    title = data.get('title', '')
+    release_date = data.get('release_date', '')
 
+    new_movie = Movie(title=title, release_date=release_date)
+    try:
+        new_movie.insert()
         return jsonify({
-          'success': True,
-          'movie': movie.format()
+            'success': True,
+            'movie': new_movie.format()
         }), 201
-    else:
-      bad_request(400)
+    except():
+        abort(500)
 
   '''
   PATCH
@@ -184,12 +189,13 @@ def create_app(test_config=None):
     
   '''
   @app.route('/movies/<int:id>', methods=['PATCH'])
-  def update_movie(id):
+  @requires_auth('patch:movie')
+  def update_movie(jwt, id):
     data = request.get_json()
 
-    movie = Movie.query.filter(Movie.id == id).one_or_none()
+    movie = Movie.query.filter(Movie.id == id).first()
 
-    if movie is None:
+    if not movie:
       not_found(404)
     else:
       movie.title = data.get('title')
@@ -200,26 +206,27 @@ def create_app(test_config=None):
       return jsonify({
         'success': True
       }), 200
-
+  
   '''
   DELETE
     - delete movie
     
   '''
   @app.route('/movies/<int:id>', methods=['DELETE'])
-  def delete_movie(id):
-    movie = Movie.query.filter(Movie.id == id).one_or_none()
+  @requires_auth('delete:movie')
+  def delete_movie(jwt, id):
+    movie = Movie.query.get(id)
 
     if movie is None:
       not_found(404)
     else:
       movie.delete()
 
-    return jsonify({
-      'success': True
-    }), 200
+      return jsonify({
+        'success': True
+      }), 200
 
-  
+
   # error handlers
   @app.errorhandler(400)
   def bad_request(error):

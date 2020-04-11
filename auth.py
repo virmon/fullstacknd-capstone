@@ -1,5 +1,5 @@
 import json
-from flask import request, abort
+from flask import request, _request_ctx_stack, abort
 from functools import wraps
 from jose import jwt
 from urllib.request import urlopen
@@ -47,26 +47,24 @@ def get_token_auth_header():
 
 
 def check_permissions(permission, payload):
-    if payload.get('permissions'):
-        token_scopes = payload.get("permissions")
-        try:
-            if (permission not in token_scopes):
-                raise AuthError({
-                    'code': 'invalid_permissions',
-                    'description': 'User does not have enough privileges'
-                }, 401)
-            else:
-                return True
-        except:
-            abort(401)
-    else:
+    if 'permissions' not in payload:
         raise AuthError({
-            'code': 'invalid_header',
-            'description': 'User does not have any roles attached'
-        }, 401)
+            'code': 'invalid_claims',
+            'description': 'Permissions not included in JWT.'
+        }, 400)
+
+    if permission not in payload['permissions']:
+        raise AuthError({
+            'code': 'unauthorized',
+            'description': 'Permission not found.'
+        }, 403)
+    return True
 
 
 def verify_decode_jwt(token):
+    # jsonurl = urlopen(f'https://{AUTH0_DOMAIN}/.well-known/jwks.json')
+    # jwks = json.loads(jsonurl.read())
+
     myurl = 'https://%s/.well-known/jwks.json' % (AUTH0_DOMAIN)
     jsonurl = urlopen(myurl)
     content = jsonurl.read().decode(jsonurl.headers.get_content_charset())
@@ -131,14 +129,13 @@ def requires_auth(permission=''):
     def requires_auth_decorator(f):
         @wraps(f)
         def wrapper(*args, **kwargs):
-            token = get_token_auth_header()
             try:
+                token = get_token_auth_header()
                 payload = verify_decode_jwt(token)
-            except:
-                abort(401)
+                check_permissions(permission, payload)
+            except AuthError as err:
+                abort(401, err.error)
 
-            check_permissions(permission, payload)
-            
             return f(payload, *args, **kwargs)
 
         return wrapper
