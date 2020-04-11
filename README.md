@@ -20,6 +20,11 @@ export FLASK_APP=app.py
 flask run --reload
 ```
 
+### Roles
+ - Casting Assistant: view only
+ - Casting Director: view, create and modify actors; modify movie
+ - Executive Producer: view, create and modify actors; create and modify movie
+
 ## Endpoints
 
 ### Actor
@@ -29,10 +34,22 @@ flask run --reload
 {
     "actors": [
         {
-            "genres": "[Fantasy]",
+            "age": 30,
+            "gender": "male",
             "id": 1,
-            "name": "Dana",
-            "role": "Supporting Actor"
+            "name": "James"
+        },
+        {
+            "age": 25,
+            "gender": "female",
+            "id": 2,
+            "name": "Dana"
+        },
+        {
+            "age": 30,
+            "gender": "male",
+            "id": 4,
+            "name": "Andy"
         }
     ],
     "success": true
@@ -44,10 +61,10 @@ flask run --reload
 ```bash
 {
     "actor": {
-        "genres": "[Fantasy]",
+        "age": 30,
+        "gender": "male",
         "id": 1,
-        "name": "Dana",
-        "role": "Supporting Actor"
+        "name": "James"
     },
     "success": true
 }
@@ -58,10 +75,10 @@ flask run --reload
 ```bash
 {
     "actor": {
-        "genres": "[Fantasy, Romance]",
-        "id": 2,
-        "name": "Andy",
-        "role": "Lead Actor"
+        "age": 25,
+        "gender": "female",
+        "id": 5,
+        "name": "Dana"
     },
     "success": true
 }
@@ -71,8 +88,7 @@ flask run --reload
 
 ```bash
 {
-    "success": true,
-    "updated": 2
+    "success": true
 }
 ```
 
@@ -80,7 +96,78 @@ flask run --reload
 
 ```bash
 {
-    "deleted": 2,
     "success": true
 }
+```
+
+### Movie
+### GET all movies
+
+```bash
+{
+    "movies": [
+        {
+            "id": 1,
+            "release_date": "Sat, 01 Jun 2013 00:00:00 GMT",
+            "title": "Space Hound"
+        },
+        {
+            "id": 3,
+            "release_date": "Fri, 01 Jan 2021 00:00:00 GMT",
+            "title": "Space Ranger"
+        }
+    ],
+    "success": true
+}
+```
+
+### GET movie by id
+
+```bash
+{
+    "movie": {
+        "id": 4,
+        "release_date": "Sat, 01 Jan 2022 00:00:00 GMT",
+        "title": "Space Hound"
+    },
+    "success": true
+}
+```
+
+### POST add movie
+
+```bash
+{
+    "movie": {
+        "id": 2,
+        "release_date": "Mon, 01 Jun 2020 00:00:00 GMT",
+        "title": "Amazing Show"
+    },
+    "success": true
+}
+```
+
+### PATCH movie
+
+```bash
+{
+    "success": true
+}
+```
+
+### DELETE movie
+
+```bash
+{
+    "success": true
+}
+```
+
+## Run Test
+
+```bash
+dropdb casting
+createdb casting
+psql casting < movie.psql
+python test_app.py
 ```
