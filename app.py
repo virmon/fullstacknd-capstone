@@ -1,5 +1,5 @@
 import os
-from flask import Flask, request, jsonify, abort
+from flask import Flask, request, jsonify, abort, redirect
 from sqlalchemy import exc
 from models import Actor, Movie, setup_db
 from flask_cors import CORS
@@ -13,11 +13,16 @@ def create_app(test_config=None):
 
   @app.route('/')
   def index():
-    return "Casting Agency API"
-    # return jsonify({
-    #   'login': "https://fullstacknd-capstone.auth0.com/authorize?audience=movie&response_type=token&client_id=LNlBEBoUOOHQgDeh51TVaYlogoZT8FAG&redirect_uri=http://localhost:5000",
-    #   'logout': "https://fullstacknd-capstone.auth0.com/v2/logout"
-    # })
+    return "<h1>Casting Agency API</h1> <br> <a href='/login'>Login</a>"
+
+  @app.route('/login')
+  def login():
+    return redirect("https://fullstacknd-capstone.auth0.com/authorize?audience=movie&response_type=token&client_id=LNlBEBoUOOHQgDeh51TVaYlogoZT8FAG&redirect_uri=http://localhost:5000")
+
+  @app.route('/logout')
+  def logout():
+    return redirect("https://fullstacknd-capstone.auth0.com/v2/logout")
+
 
   '''
   Actor Endpoint
@@ -33,7 +38,7 @@ def create_app(test_config=None):
     data = [actor.format() for actor in result]
     
     if not data:
-      not_found(404)
+      return not_found(404)
       
     return jsonify({
       'success': True,
@@ -51,7 +56,7 @@ def create_app(test_config=None):
     result = Actor.query.get(id)
     
     if not result:
-      not_found(404)
+      return not_found(404)
     else:
       return jsonify({
         'success': True,
@@ -80,7 +85,7 @@ def create_app(test_config=None):
             'actor': new_actor.format()
         }), 201
     except():
-        abort(500)
+        return abort(500)
 
   '''
   PATCH
@@ -95,7 +100,7 @@ def create_app(test_config=None):
     actor = Actor.query.filter(Actor.id == id).first()
 
     if not actor:
-      not_found(404)
+      return not_found(404)
     else:
       actor.name = data.get('name')
       actor.age = data.get('age')
@@ -118,7 +123,7 @@ def create_app(test_config=None):
     actor = Actor.query.get(id)
 
     if actor is None:
-      not_found(404)
+      return not_found(404)
     else:
       actor.delete()
 
@@ -140,7 +145,7 @@ def create_app(test_config=None):
     data = [movie.format() for movie in result]
     
     if not data:
-      not_found(404)
+      return not_found(404)
       
     return jsonify({
       'success': True,
@@ -158,7 +163,7 @@ def create_app(test_config=None):
     result = Movie.query.get(id)
     
     if not result:
-      not_found(404)
+      return not_found(404)
     else:
       return jsonify({
         'success': True,
@@ -186,7 +191,7 @@ def create_app(test_config=None):
             'movie': new_movie.format()
         }), 201
     except():
-        abort(500)
+        return abort(500)
 
   '''
   PATCH
@@ -201,7 +206,7 @@ def create_app(test_config=None):
     movie = Movie.query.filter(Movie.id == id).first()
 
     if not movie:
-      not_found(404)
+      return not_found(404)
     else:
       movie.title = data.get('title')
       movie.release_date = data.get('release_date')
@@ -223,7 +228,7 @@ def create_app(test_config=None):
     movie = Movie.query.get(id)
 
     if movie is None:
-      not_found(404)
+      return not_found(404)
     else:
       movie.delete()
 
