@@ -3,9 +3,10 @@
 https://fullstacknd-capstone.herokuapp.com/
 
 ## Auth0 Credentials
+- email: super@example.com
+- password: .Re-nuDtaJF5e4K
+
 [Login to site](https://fullstacknd-capstone.herokuapp.com/login)
-email: super@example.com
-password: .Re-nuDtaJF5e4K
 
 ## Getting Started
 
