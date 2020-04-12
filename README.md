@@ -19,7 +19,7 @@ pip install -r requirements.txt
 ### Setup environment
 
 ```bash
-export FLASK_APP=app.py
+. ./setup.sh
 ```
 
 ### Start server
